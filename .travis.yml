@@ -1,0 +1,10 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker build -t heliumsystems/intercept:travis .
+
+script:
+  - docker run heliumsystems/intercept:travis /bin/sh -c "rebar3 ct -v"

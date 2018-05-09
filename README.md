@@ -1,9 +1,1 @@
-intercept
-=====
-
-An OTP library
-
-Build
------
-
-    $ rebar3 compile
+# Intercept [![Build Status](https://travis-ci.org/helium/intercept.svg?branch=master)](https://travis-ci.org/helium/intercept)
