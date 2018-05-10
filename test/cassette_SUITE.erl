@@ -12,6 +12,7 @@
 
 -export([
     udp/1
+    ,httpc/1
 ]).
 
 %%--------------------------------------------------------------------
@@ -34,7 +35,7 @@ all() ->
 %% @end
 %%--------------------------------------------------------------------
 groups() ->
-    [{cassette, [], [udp]}].
+    [{cassette, [], [udp, httpc]}].
 
 
 %%--------------------------------------------------------------------
@@ -97,6 +98,25 @@ udp(_Config) ->
         ct:fail("timeout")
     end.
 
+%%--------------------------------------------------------------------
+%% @public
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
+httpc(_Config) ->
+    ct:pal("START OF ~p", [?FUNCTION_NAME]),
+    intercept:add(httpc, httpc_intercepts, [{{request, 1}, request}]),
+
+    {ok, HTTPServer} = elli:start_link([{callback, http_server}, {ip, {127,0,0,1}}, {port, 4000}, {callback_args, []}]),
+
+    {ok, Res} = httpc:request("http://127.0.0.1:4000/cassette_SUITE"),
+    ?assertMatch({{_, 200, _}, _Headers, "ok"}, Res),
+
+    ?assertEqual(ok, elli:stop(HTTPServer)),
+    {ok, Res} = httpc:request("http://127.0.0.1:4000/cassette_SUITE"),
+    ?assertMatch({{_, 200, _}, _Headers, "ok"}, Res),
+
+    ?assertEqual(ok, intercept:clean(httpc)).
 
 %% ------------------------------------------------------------------
 %% Internal Function Definitions
