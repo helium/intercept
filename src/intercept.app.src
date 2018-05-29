@@ -1,5 +1,5 @@
 {application, intercept, [
-    {description, ""},
+    {description, "Intercept function calls"},
     {vsn, "1.0.0"},
     {registered, []},
     {applications, [
