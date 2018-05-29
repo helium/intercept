@@ -1,6 +1,6 @@
 {application, intercept, [
-    {description, "An OTP library"},
-    {vsn, "0.1.0"},
+    {description, ""},
+    {vsn, "1.0.0"},
     {registered, []},
     {applications, [
         kernel,
@@ -8,7 +8,7 @@
     ]},
     {env,[]},
     {modules, []},
-    {maintainers, []},
+    {maintainers, ["Macpie"]},
     {licenses, ["Apache 2.0"]},
     {links, []}
  ]}.
