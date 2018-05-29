@@ -1,5 +1,5 @@
 %% -------------------------------------------------------------------
-%%
+%% @doc
 %% Copyright (c) 2015 Basho Technologies, Inc.
 %%
 %% This file is provided to you under the Apache License,
@@ -15,7 +15,7 @@
 %% KIND, either express or implied.  See the License for the
 %% specific language governing permissions and limitations
 %% under the License.
-%%
+%% @end
 %%-------------------------------------------------------------------
 -module(intercept).
 
@@ -35,23 +35,14 @@
 -type form_mod() :: fun((form()) -> form()).
 -type code_mod() :: fun((form(), abstract_code()) -> abstract_code()).
 
+
 %%--------------------------------------------------------------------
-%% @doc
 %% The "original" is the `Target' module with the suffix `_orig'.  It
 %% is where original code for the `Target' module resides after
 %% intercepts are added.
-%% @end
 %%--------------------------------------------------------------------
 -define(ORIGINAL(Mod), list_to_atom(atom_to_list(Mod) ++ "_orig")).
 -define(FAKE_LINE_NO, 1).
-
-%%--------------------------------------------------------------------
-%% @doc
-%% @end
-%%--------------------------------------------------------------------
--spec add(module(), module(), mapping()) -> ok.
-add(Target, Intercept, Mapping) ->
-    ?MODULE:add(Target, Intercept, Mapping, undefined).
 
 %%--------------------------------------------------------------------
 %% @doc
@@ -69,6 +60,10 @@ add(Target, Intercept, Mapping) ->
 %%             E.g. `[{{update_perform,2}, sleep_update_perform}]'
 %% @end
 %%--------------------------------------------------------------------
+-spec add(module(), module(), mapping()) -> ok.
+add(Target, Intercept, Mapping) ->
+    ?MODULE:add(Target, Intercept, Mapping, undefined).
+
 -spec add(module(), module(), mapping(), string()) -> ok.
 add(Target, Intercept, Mapping, OutDir) ->
     Original = ?ORIGINAL(Target),
@@ -254,10 +249,13 @@ forward(Module, Fun, Form) ->
     Clause4 = clause_set_body(Clause3, Body),
     fun_set_clauses(Form, [Clause4]).
 
+%%--------------------------------------------------------------------
+%% @doc
+%% @end
+%%--------------------------------------------------------------------
 change_module_name(NewName, AC) ->
     lists:keyreplace(module, 3, AC, {attribute, 1, module, NewName}).
 
-%%
 %%--------------------------------------------------------------------
 %% @doc
 %% Generate an anonymous function wrapper that sets up calls for an
@@ -265,7 +263,7 @@ change_module_name(NewName, AC) ->
 %%
 %% This function returns the abstract code equivalent of the following
 %% code. If you change this code, please update this comment.
-%%
+%% ```
 %% fun(__A0_, __A1_, ...) ->
 %%     __Bindings0_ = lists:foldl(fun({__Bn_,__Bv_},__Acc_) ->
 %%                                    erl_eval:add_binding(__Bn_,__Bv_,__Acc_)
@@ -279,6 +277,7 @@ change_module_name(NewName, AC) ->
 %%                              <__A0_ etc. args from generate_freevars>),
 %%     erl_eval:expr(<abstract code for AnonFun(__A0_, __A1_, ...)>,
 %%                   __Bindings_, none, none, value).
+%% '''
 %% @end
 %%--------------------------------------------------------------------
 generate_fun_wrapper(FreeVars, AnonFun, NumArgs) ->
